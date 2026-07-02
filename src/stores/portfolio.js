@@ -5,7 +5,12 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const profile = ref({
     name: 'James Anilov G. Huelgas',
     title: 'Aspiring Full Stack Developer',
-    bio: 'Motivated and hardworking Information Technology student seeking an opportunity to apply technical knowledge, creativity, and problem-solving skills in a professional environment. Eager to gain experience and contribute effectively to the company while continuing to develop skills in technology and design.',
+    bio: 'Motivated and hardworking Information Technology student seeking an opportunity to apply technical knowledge, creativity, and problem-solving skills in a professional environment.',
+    descriptions: [
+      'Motivated and hardworking Information Technology student seeking an opportunity to apply technical knowledge, creativity, and problem-solving skills in a professional environment.',
+      'When I’m away from the keyboard, I’m exploring the latest technologies, refining my skills through side projects, and enjoying coffee while planning my next big idea.',
+      'I build user-centered web applications with clean code, strong collaboration, and a modern, polished interface.',
+    ],
     avatar: '/images/733911651_2192331277992421_1574361777246603930.jpg',
     location: 'Cabuyao, Laguna',
     email: 'huelgasjames46@gmail.com',
@@ -58,7 +63,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       thumbnail: '/images/projects/MiSDInv.jpeg',
       github_url: '#',
       live_url: 'https://mis-inventory-sys.vercel.app/',
-      tech_stack: ['Vue.js', 'OpenWeather API', 'Chart.js'],
+      tech_stack: ['Vue.js', 'REST API', 'Chart.js'],
       features: ['Repair Service Request System', 'Real-time Inventory Tracking', 'Location-based'],
       category: 'Web Development',
       featured: false,
@@ -138,7 +143,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     },
     {
       id: 2,
-      title: 'Part-Time Freelance Graphic Designer',
+      title: 'Part-Time Freelance Graphic Designer (Seasonal)',
       company: 'Freelance',
       location: 'Remote',
       start_date: '2020-01-01',
@@ -224,7 +229,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     theme_color: '#6366f1',
   })
 
-  const loading = ref(false)
+  const loading = ref(true)
   const error = ref(null)
 
   function getProjectBySlug(slug) {
@@ -258,6 +263,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
 
   async function fetchAll() {
     // Data is already loaded, no API calls needed
+    await new Promise(resolve => setTimeout(resolve, 5000))
     loading.value = false
   }
 

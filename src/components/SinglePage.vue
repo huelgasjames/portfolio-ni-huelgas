@@ -7,14 +7,45 @@ const selectedCategory = ref('All')
 const activeSection = ref('hero')
 const scrollProgress = ref(0)
 const mobileMenuOpen = ref(false)
+const descriptionIndex = ref(0)
+const descriptionInterval = ref(null)
+const expandedExperienceIds = ref([])
 
 const categories = ['All', ...new Set(portfolioStore.projects.map(p => p.category).filter(Boolean))]
+
+const descriptions = computed(() => {
+  return portfolioStore.profile?.descriptions || [portfolioStore.profile?.bio || '']
+})
+
+const currentDescription = computed(() => {
+  if (!descriptions.value.length) return ''
+  return descriptions.value[descriptionIndex.value % descriptions.value.length]
+})
 
 const filteredProjects = computed(() => {
   if (selectedCategory.value === 'All') return portfolioStore.projects
   return portfolioStore.projects.filter(p => p.category === selectedCategory.value)
 })
 
+const nextDescription = () => {
+  if (!descriptions.value.length) return
+  descriptionIndex.value = (descriptionIndex.value + 1) % descriptions.value.length
+}
+
+const prevDescription = () => {
+  if (!descriptions.value.length) return
+  descriptionIndex.value = (descriptionIndex.value - 1 + descriptions.value.length) % descriptions.value.length
+}
+
+const isExpandedExperience = (id) => expandedExperienceIds.value.includes(id)
+
+const toggleExperience = (id) => {
+  if (isExpandedExperience(id)) {
+    expandedExperienceIds.value = expandedExperienceIds.value.filter(item => item !== id)
+  } else {
+    expandedExperienceIds.value = [...expandedExperienceIds.value, id]
+  }
+}
 
 const sections = ['hero', 'about', 'skills', 'experience', 'projects', 'contact']
 
@@ -45,10 +76,15 @@ const handleScroll = () => {
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   handleScroll()
+
+  descriptionInterval.value = setInterval(() => {
+    nextDescription()
+  }, 7000)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  if (descriptionInterval.value) clearInterval(descriptionInterval.value)
 })
 </script>
 
@@ -61,8 +97,8 @@ onUnmounted(() => {
     <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-0 border-b border-white/10">
       <div class="section-container py-4">
         <div class="flex items-center justify-between">
-          <button @click="scrollToSection('hero')" class="text-2xl font-bold gradient-text hover:scale-105 transition-transform">
-            HUELGAS
+          <button @click="scrollToSection('hero')" class="flex items-center gap-2 hover:scale-105 transition-transform">
+            <img src="/images/HueLogo.png" alt="HueLogo" class="w-10 h-10 rounded-full object-cover" />
           </button>
           <div class="hidden md:flex items-center gap-8">
             <button 
@@ -80,7 +116,6 @@ onUnmounted(() => {
                 class="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-white to-gray-400 rounded-full"
               ></span>
             </button>
-            <button @click="scrollToSection('contact')" class="btn-primary">Contact</button>
           </div>
           <button 
             @click="mobileMenuOpen = !mobileMenuOpen"
@@ -115,6 +150,29 @@ onUnmounted(() => {
     <!-- Hero Section -->
     <section id="hero" class="min-h-screen flex items-center justify-center pt-20 px-4 relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none"></div>
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="moving-dot dot-1 bg-white/20"></div>
+        <div class="moving-dot dot-2 bg-white/20"></div>
+        <div class="moving-dot dot-3 bg-white/20"></div>
+        <div class="moving-dot dot-4 bg-white/20"></div>
+        <div class="moving-dot dot-5 bg-white/20"></div>
+        <div class="moving-dot dot-6 bg-white/20"></div>
+        <div class="moving-dot dot-7 bg-white/20"></div>
+        <div class="moving-dot dot-8 bg-white/20"></div>
+        <div class="moving-dot dot-9 bg-white/20"></div>
+        <div class="moving-dot dot-10 bg-white/20"></div>
+        <div class="moving-dot dot-11 bg-white/20"></div>
+        <div class="moving-dot dot-12 bg-white/20"></div>
+        <div class="moving-dot dot-13 bg-white/20"></div>
+        <div class="moving-dot dot-14 bg-white/20"></div>
+        <div class="moving-dot dot-15 bg-white/20"></div>
+        <div class="moving-dot dot-16 bg-white/20"></div>
+        <div class="moving-dot dot-17 bg-white/20"></div>
+        <div class="moving-dot dot-18 bg-white/20"></div>
+        <div class="moving-dot dot-19 bg-white/20"></div>
+        <div class="moving-dot dot-20 bg-white/20"></div>
+        <div class="particle-cluster"></div>
+      </div>
       <div class="section-container text-center relative z-10">
         <div class="animate-fade-in">
           <div class="mb-6 inline-block">
@@ -136,9 +194,20 @@ onUnmounted(() => {
           <p class="text-xl md:text-2xl text-gray-400 mb-8 max-w-2xl mx-auto">
             {{ portfolioStore.profile?.title || 'Full Stack Developer' }}
           </p>
-          <p v-if="portfolioStore.profile" class="text-lg text-gray-500 mb-12 max-w-3xl mx-auto leading-relaxed">
-            {{ portfolioStore.profile.bio }}
+          <p v-if="portfolioStore.profile" class="text-lg text-gray-500 mb-6 max-w-3xl mx-auto leading-relaxed">
+            {{ currentDescription }}
           </p>
+          <div class="flex items-center justify-center gap-3 mb-8">
+            <button
+              v-for="(description, index) in descriptions"
+              :key="index"
+              @click="descriptionIndex = index"
+              class="w-3 h-3 rounded-full transition-all duration-300"
+              :class="descriptionIndex === index ? 'bg-white shadow-lg shadow-white/20 scale-110' : 'bg-white/30 hover:bg-white/60'
+              "
+              :aria-label="`Select description ${index + 1}`"
+            ></button>
+          </div>
           <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <button @click="scrollToSection('projects')" class="btn-primary">
               View My Work
@@ -289,17 +358,29 @@ onUnmounted(() => {
             <div v-for="(exp, index) in portfolioStore.experiences" :key="exp.id" class="relative pl-8 pb-12 last:pb-0">
               <div class="absolute left-0 top-0 w-4 h-4 bg-white rounded-full -translate-x-[9px] border-4 border-background"></div>
               <div class="glass-card p-6 hover:border-white/50 transition-colors">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
+                <div class="mb-3">
                   <h3 class="text-xl font-bold">{{ exp.title }}</h3>
-                  <span class="text-sm text-white font-medium mt-1 md:mt-0">{{ exp.current ? 'Current' : 'Past' }}</span>
                 </div>
                 <p class="text-lg text-gray-300 mb-2">{{ exp.company }}</p>
                 <p class="text-gray-400 text-sm mb-4">
                   {{ new Date(exp.start_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }} - {{ exp.current ? 'Present' : new Date(exp.end_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}
                 </p>
-                <p v-if="exp.description" class="text-gray-400 mb-4">{{ exp.description }}</p>
-                <div v-if="exp.achievements && exp.achievements.length > 0" class="space-y-2">
-                  <p class="text-sm font-medium text-gray-300 mb-2">Key Achievements:</p>
+                <p v-if="exp.description" class="text-gray-400 mb-4">
+                  <span v-if="!isExpandedExperience(exp.id)">
+                    {{ exp.description.length > 120 ? exp.description.slice(0, 120) + '...' : exp.description }}
+                  </span>
+                  <span v-else>
+                    {{ exp.description }}
+                  </span>
+                </p>
+                <div v-if="isExpandedExperience(exp.id) && exp.responsibilities && exp.responsibilities.length > 0" class="space-y-2 mb-4">
+                  <p class="text-sm font-medium text-gray-300">Responsibilities:</p>
+                  <ul class="list-disc list-inside space-y-1 text-sm text-gray-400">
+                    <li v-for="responsibility in exp.responsibilities" :key="responsibility">{{ responsibility }}</li>
+                  </ul>
+                </div>
+                <div v-if="isExpandedExperience(exp.id) && exp.achievements && exp.achievements.length > 0" class="space-y-2 mb-4">
+                  <p class="text-sm font-medium text-gray-300">Key Achievements:</p>
                   <ul class="space-y-1">
                     <li v-for="achievement in exp.achievements" :key="achievement" class="text-sm text-gray-400 flex items-start gap-2">
                       <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -309,6 +390,12 @@ onUnmounted(() => {
                     </li>
                   </ul>
                 </div>
+                <button
+                  @click="toggleExperience(exp.id)"
+                  class="text-sm font-medium text-primary hover:text-white transition-colors"
+                >
+                  {{ isExpandedExperience(exp.id) ? 'Show less' : 'See more...' }}
+                </button>
               </div>
             </div>
           </div>
@@ -330,14 +417,13 @@ onUnmounted(() => {
             :class="[
               'px-4 py-2 rounded-lg transition-all text-sm font-medium',
               selectedCategory === category
-                ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                ? 'bg-gray-300 text-black shadow-lg shadow-gray-500/20'
                 : 'bg-surface text-gray-400 hover:text-white hover:bg-surface/80'
             ]"
           >
             {{ category }}
           </button>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div
             v-for="project in filteredProjects"
