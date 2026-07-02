@@ -358,7 +358,7 @@ onUnmounted(() => {
               </div>
               <div class="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
                 <div class="flex gap-3">
-                  <a v-if="project.live_url" :href="project.live_url" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-primaryryry twhitetete rounded-lg text-sm font-medium hoverpbimpr-/9rr/9ry/90 transition-colors">
+                  <a v-if="project.live_url" :href="project.live_url" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-white text-black rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
                     Live Demo
                   </a>
                   <a v-if="project.github_url" :href="project.github_url" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-surface text-white rounded-lg text-sm font-medium hover:bg-surface/80 transition-colors">
