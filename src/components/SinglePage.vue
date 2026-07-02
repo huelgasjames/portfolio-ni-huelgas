@@ -15,6 +15,7 @@ const filteredProjects = computed(() => {
   return portfolioStore.projects.filter(p => p.category === selectedCategory.value)
 })
 
+
 const sections = ['hero', 'about', 'skills', 'experience', 'projects', 'testimonials', 'contact']
 
 const scrollToSection = (id) => {
