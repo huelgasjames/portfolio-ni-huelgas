@@ -16,7 +16,7 @@ const filteredProjects = computed(() => {
 })
 
 
-const sections = ['hero', 'about', 'skills', 'experience', 'projects', 'testimonials', 'contact']
+const sections = ['hero', 'about', 'skills', 'experience', 'projects', 'contact']
 
 const scrollToSection = (id) => {
   const element = document.getElementById(id)
