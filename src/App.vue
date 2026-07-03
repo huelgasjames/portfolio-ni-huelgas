@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted } from 'vue'
 import { usePortfolioStore } from './stores/portfolio'
-import SinglePage from './components/SinglePage.vue'
 
 const portfolioStore = usePortfolioStore()
 
@@ -24,6 +23,6 @@ onMounted(() => {
       />
     </div>
 
-    <SinglePage />
+    <router-view />
   </div>
 </template>

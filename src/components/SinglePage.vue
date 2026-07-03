@@ -10,6 +10,7 @@ const mobileMenuOpen = ref(false)
 const descriptionIndex = ref(0)
 const descriptionInterval = ref(null)
 const expandedExperienceIds = ref([])
+const currentCertIndex = ref(0)
 
 const categories = ['All', ...new Set(portfolioStore.projects.map(p => p.category).filter(Boolean))]
 
@@ -39,6 +40,22 @@ const prevDescription = () => {
 
 const isExpandedExperience = (id) => expandedExperienceIds.value.includes(id)
 
+const prevCert = () => {
+  if (!portfolioStore.certifications.length) return
+  currentCertIndex.value = (currentCertIndex.value - 1 + portfolioStore.certifications.length) % portfolioStore.certifications.length
+}
+
+const nextCert = () => {
+  if (!portfolioStore.certifications.length) return
+  currentCertIndex.value = (currentCertIndex.value + 1) % portfolioStore.certifications.length
+}
+
+const setCurrentCert = (index) => {
+  if (index >= 0 && index < portfolioStore.certifications.length) {
+    currentCertIndex.value = index
+  }
+}
+
 const toggleExperience = (id) => {
   if (isExpandedExperience(id)) {
     expandedExperienceIds.value = expandedExperienceIds.value.filter(item => item !== id)
@@ -47,7 +64,7 @@ const toggleExperience = (id) => {
   }
 }
 
-const sections = ['hero', 'about', 'skills', 'experience', 'projects', 'contact']
+const sections = ['hero', 'about', 'skills', 'experience', 'certifications', 'projects', 'contact']
 
 const scrollToSection = (id) => {
   const element = document.getElementById(id)
@@ -102,7 +119,7 @@ onUnmounted(() => {
           </button>
           <div class="hidden md:flex items-center gap-8">
             <button 
-              v-for="section in sections.slice(0, 6)"
+              v-for="section in sections"
               :key="section"
               @click="scrollToSection(section)"
               :class="[
@@ -173,59 +190,64 @@ onUnmounted(() => {
         <div class="moving-dot dot-20 bg-white/20"></div>
         <div class="particle-cluster"></div>
       </div>
-      <div class="section-container text-center relative z-10">
-        <div class="animate-fade-in">
-          <div class="mb-6 inline-block">
-            <span class="px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium border border-white/20">
-              Available for opportunities
-            </span>
+      <div class="section-container relative z-10">
+        <div class="animate-fade-in grid gap-12 items-center grid-cols-1 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="space-y-6 text-center md:text-left max-w-xl mx-auto md:mx-0 px-2 sm:px-0">
+            <div class="inline-block mb-6">
+              <span class="px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium border border-white/20">
+                Available for opportunities
+              </span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">
+              <span class="gradient-text">{{ portfolioStore.profile?.name || 'John Doe' }}</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 mb-8">
+              {{ portfolioStore.profile?.title || 'Full Stack Developer' }}
+            </p>
+            <p v-if="portfolioStore.profile" class="text-lg text-gray-500 mb-6 leading-relaxed">
+              {{ currentDescription }}
+            </p>
+            <div class="flex items-center justify-center md:justify-start gap-3 mb-8">
+              <button
+                v-for="(description, index) in descriptions"
+                :key="index"
+                @click="descriptionIndex = index"
+                class="w-3 h-3 rounded-full transition-all duration-300"
+                :class="descriptionIndex === index ? 'bg-white shadow-lg shadow-white/20 scale-110' : 'bg-white/30 hover:bg-white/60'
+                "
+                :aria-label="`Select description ${index + 1}`"
+              ></button>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-12">
+              <button @click="scrollToSection('projects')" class="btn-primary">
+                View My Work
+              </button>
+              <button @click="scrollToSection('contact')" class="btn-secondary">
+                Get In Touch
+              </button>
+              <a 
+                href="/JamesHuelgas Resume.pdf" 
+                download 
+                class="btn-secondary flex items-center justify-center gap-2"
+                aria-label="Download Resume"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Resume
+              </a>
+            </div>
           </div>
-          <div class="mb-8">
-            <img 
-              v-if="portfolioStore.profile?.avatar"
-              :src="portfolioStore.profile.avatar"
-              :alt="portfolioStore.profile.name"
-              class="w-32 h-32 md:w-40 md:h-40 rounded-full mx-auto object-cover border-4 border-primary/30 shadow-2xl shadow-primary/20"
-            />
-          </div>
-          <h1 class="text-5xl md:text-7xl font-bold mb-6">
-            <span class="gradient-text">{{ portfolioStore.profile?.name || 'John Doe' }}</span>
-          </h1>
-          <p class="text-xl md:text-2xl text-gray-400 mb-8 max-w-2xl mx-auto">
-            {{ portfolioStore.profile?.title || 'Full Stack Developer' }}
-          </p>
-          <p v-if="portfolioStore.profile" class="text-lg text-gray-500 mb-6 max-w-3xl mx-auto leading-relaxed">
-            {{ currentDescription }}
-          </p>
-          <div class="flex items-center justify-center gap-3 mb-8">
-            <button
-              v-for="(description, index) in descriptions"
-              :key="index"
-              @click="descriptionIndex = index"
-              class="w-3 h-3 rounded-full transition-all duration-300"
-              :class="descriptionIndex === index ? 'bg-white shadow-lg shadow-white/20 scale-110' : 'bg-white/30 hover:bg-white/60'
-              "
-              :aria-label="`Select description ${index + 1}`"
-            ></button>
-          </div>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <button @click="scrollToSection('projects')" class="btn-primary">
-              View My Work
-            </button>
-            <button @click="scrollToSection('contact')" class="btn-secondary">
-              Get In Touch
-            </button>
-            <a 
-              href="/JamesHuelgas Resume.pdf" 
-              download 
-              class="btn-secondary flex items-center justify-center gap-2"
-              aria-label="Download Resume"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Resume
-            </a>
+
+          <div class="flex justify-center md:justify-end">
+            <div class="mb-8 md:mb-0">
+              <img 
+                v-if="portfolioStore.profile?.avatar"
+                :src="portfolioStore.profile.avatar"
+                :alt="portfolioStore.profile.name"
+                class="w-40 h-40 sm:w-48 sm:h-48 lg:w-72 lg:h-72 rounded-full mx-auto object-cover border-4 border-primary/30 shadow-2xl shadow-primary/20"
+              />
+            </div>
           </div>
         </div>
 
@@ -400,6 +422,85 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section id="certifications" class="py-20 px-4 bg-surface/50">
+      <div class="section-container">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Certifications</h2>
+        <div v-if="portfolioStore.certifications.length > 0" class="max-w-5xl mx-auto">
+          <div class="relative glass-card overflow-hidden p-6 hover:border-white/50 transition-colors">
+            <div class="flex flex-col lg:flex-row gap-6 items-center">
+              <div class="w-full lg:w-1/3">
+                <img
+                  v-if="portfolioStore.certifications[currentCertIndex]?.image"
+                  :src="portfolioStore.certifications[currentCertIndex].image"
+                  :alt="portfolioStore.certifications[currentCertIndex].title"
+                  class="w-full h-64 rounded-3xl object-cover border border-white/10"
+                />
+              </div>
+
+              <div class="flex-1">
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                  <div>
+                    <h3 class="text-3xl font-bold">{{ portfolioStore.certifications[currentCertIndex].title }}</h3>
+                    <p class="text-primary text-lg">{{ portfolioStore.certifications[currentCertIndex].organization }}</p>
+                  </div>
+                  <span class="text-sm text-gray-400">{{ portfolioStore.certifications[currentCertIndex].issue_date }}</span>
+                </div>
+
+                <p class="text-gray-400 mb-6">{{ portfolioStore.certifications[currentCertIndex].description }}</p>
+
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                  <a
+                    v-if="portfolioStore.certifications[currentCertIndex].verification_url"
+                    :href="portfolioStore.certifications[currentCertIndex].verification_url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-secondary text-sm"
+                  >
+                    Verify
+                  </a>
+                  <span v-if="portfolioStore.certifications[currentCertIndex].credential_id" class="text-sm text-gray-400">ID: {{ portfolioStore.certifications[currentCertIndex].credential_id }}</span>
+                  <router-link to="/certificates" class="btn-primary text-sm">
+                    See all certificates
+                  </router-link>
+                </div>
+
+                <div class="flex items-center justify-between gap-4">
+                  <button
+                    @click="prevCert"
+                    class="btn-secondary px-4 py-3 text-sm"
+                    aria-label="Previous certificate"
+                  >
+                    Previous
+                  </button>
+                  <div class="flex items-center gap-2 flex-wrap justify-center">
+                    <button
+                      v-for="(cert, index) in portfolioStore.certifications"
+                      :key="cert.id"
+                      @click="setCurrentCert(index)"
+                      :class="[
+                        'w-3 h-3 rounded-full transition-all duration-200',
+                        currentCertIndex === index ? 'bg-white shadow-lg shadow-white/30 scale-110' : 'bg-white/30 hover:bg-white/60'
+                      ]"
+                      :aria-label="`Select certificate ${index + 1}`"
+                    ></button>
+                  </div>
+                  <button
+                    @click="nextCert"
+                    class="btn-secondary px-4 py-3 text-sm"
+                    aria-label="Next certificate"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="text-center text-gray-400">No certifications added yet.</div>
       </div>
     </section>
 
