@@ -5,9 +5,9 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const profile = ref({
     name: 'James Anilov G. Huelgas',
     title: 'Aspiring Full Stack Developer',
-    bio: 'Motivated and hardworking Information Technology student seeking an opportunity to apply technical knowledge, creativity, and problem-solving skills in a professional environment.',
+    bio: 'Motivated and hardworking Information Technology graduate seeking an opportunity to apply technical knowledge, creativity, and problem-solving skills in a professional environment.',
     descriptions: [
-      'Motivated and hardworking Information Technology student seeking an opportunity to apply technical knowledge, creativity, and problem-solving skills in a professional environment.',
+      'Motivated and hardworking Information Technology graduate seeking an opportunity to apply technical knowledge, creativity, and problem-solving skills in a professional environment.',
       'When I’m away from the keyboard, I’m exploring the latest technologies, refining my skills through side projects, and enjoying coffee while planning my next big idea.',
       'I build user-centered web applications with clean code, strong collaboration, and a modern, polished interface.',
     ],
