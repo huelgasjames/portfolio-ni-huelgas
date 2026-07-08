@@ -113,19 +113,21 @@ onUnmounted(() => {
 
 <template>
   <div class="min-h-screen">
-    <div v-if="showIntro" class="fixed inset-0 z-[80] bg-black flex items-center justify-center">
-      <video
-        ref="introVideo"
-        autoplay
-        muted
-        playsinline
-        preload="auto"
-        class="w-full h-full object-cover"
-        @ended="finishIntro"
-      >
-        <source src="/video%20loop/James%20Anilov%20Logo%20Intro.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <div v-if="showIntro" class="fixed inset-0 z-[80] bg-black flex items-center justify-center overflow-hidden">
+      <div class="absolute inset-0 flex items-center justify-center">
+        <video
+          ref="introVideo"
+          autoplay
+          muted
+          playsinline
+          preload="auto"
+          class="w-full h-full max-w-none object-contain object-center md:object-cover"
+          @ended="finishIntro"
+        >
+          <source src="/video%20loop/James%20Anilov%20Logo%20Intro.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
     </div>
 
     <!-- Scroll Progress Bar -->
