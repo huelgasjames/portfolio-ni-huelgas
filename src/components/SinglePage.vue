@@ -11,6 +11,7 @@ const descriptionIndex = ref(0)
 const descriptionInterval = ref(null)
 const expandedExperienceIds = ref([])
 const currentCertIndex = ref(0)
+const showIntro = ref(true)
 
 const categories = ['All', ...new Set(portfolioStore.projects.map(p => p.category).filter(Boolean))]
 
@@ -64,6 +65,10 @@ const toggleExperience = (id) => {
   }
 }
 
+const finishIntro = () => {
+  showIntro.value = false
+}
+
 const sections = ['hero', 'about', 'skills', 'experience', 'certifications', 'projects', 'contact']
 
 const scrollToSection = (id) => {
@@ -97,6 +102,12 @@ onMounted(() => {
   descriptionInterval.value = setInterval(() => {
     nextDescription()
   }, 7000)
+
+  window.setTimeout(() => {
+    if (showIntro.value) {
+      showIntro.value = false
+    }
+  }, 6000)
 })
 
 onUnmounted(() => {
@@ -107,6 +118,20 @@ onUnmounted(() => {
 
 <template>
   <div class="min-h-screen">
+    <div v-if="showIntro" class="fixed inset-0 z-[80] bg-black flex items-center justify-center">
+      <video
+        autoplay
+        muted
+        playsinline
+        preload="auto"
+        class="w-full h-full object-cover"
+        @ended="finishIntro"
+      >
+        <source src="/video%20loop/James%20Anilov%20Logo%20Intro.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
     <!-- Scroll Progress Bar -->
     <div class="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-white to-gray-400 z-[60] transition-all duration-150" :style="{ width: scrollProgress + '%' }"></div>
 
