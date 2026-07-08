@@ -12,6 +12,7 @@ const descriptionInterval = ref(null)
 const expandedExperienceIds = ref([])
 const currentCertIndex = ref(0)
 const showIntro = ref(true)
+const introVideo = ref(null)
 
 const categories = ['All', ...new Set(portfolioStore.projects.map(p => p.category).filter(Boolean))]
 
@@ -102,12 +103,6 @@ onMounted(() => {
   descriptionInterval.value = setInterval(() => {
     nextDescription()
   }, 7000)
-
-  window.setTimeout(() => {
-    if (showIntro.value) {
-      showIntro.value = false
-    }
-  }, 6000)
 })
 
 onUnmounted(() => {
@@ -120,6 +115,7 @@ onUnmounted(() => {
   <div class="min-h-screen">
     <div v-if="showIntro" class="fixed inset-0 z-[80] bg-black flex items-center justify-center">
       <video
+        ref="introVideo"
         autoplay
         muted
         playsinline
